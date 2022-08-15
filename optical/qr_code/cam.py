@@ -1,27 +1,28 @@
 import cv2
-import zbar
+import pyzbar
 from PIL import Image
 
 cv2.namedWindow("qrcode_reader")
 cap = cv2.VideoCapture(0)
 
-scanner = zbar.ImageScanner()
+scanner = pyzbar.ImageScanner()
 scanner.parse_config('enable')
 
 # Capture frames from the camera
 while True:
     ret, output = cap.read()
-    if not ret:
-	  continue
+    # if not ret:
+	#   continue
+
     gray = cv2.cvtColor(output, cv2.COLOR_BGR2GRAY, dstCn=0)
     pil = Image.fromarray(gray)
     width, height = pil.size
     raw = pil.tobytes()
-    image = zbar.Image(width, height, 'Y800', raw)
+    image = pyzbar.Image(width, height, 'Y800', raw)
     scanner.scan(image)
-	
+
     for symbol in image:
-        print 'decoded', symbol.type, 'symbol', '"%s"' % symbol.data
+        print('decoded', symbol.type, 'symbol', '"%s"' % symbol.data)
 
     cv2.imshow("qrcode_reader", output)
 
